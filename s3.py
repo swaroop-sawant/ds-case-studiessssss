@@ -1,126 +1,85 @@
-users = []
-MAX_USERS = 20
-
-matrix = [
-    [0] * MAX_USERS for _ in range(MAX_USERS)
-]
+class Node:
+    def __init__(self, data):
+        self.data = data
+        self.next = None
 
 
-def add_user():
-    if len(users) >= MAX_USERS:
-        print("Maximum number of users reached!")
-        return
+class PatientQueue:
+    def __init__(self):
+        self.front = None
+        self.rear = None
 
-    name = input("Enter user name: ").strip()
+    def add_patient(self, name):
+        new_node = Node(name)
 
-    if not name:
-        print("Name cannot be empty!")
-        return
+        if self.rear is None:
+            self.front = self.rear = new_node
+        else:
+            self.rear.next = new_node
+            self.rear = new_node
 
-    if name in users:
-        print("User already exists!")
-        return
+        print("Patient added to queue!")
 
-    users.append(name)
-    print("User added successfully!")
+    def treat_patient(self):
+        if self.front is None:
+            print("No patients waiting!")
+            return
 
+        patient = self.front.data
+        self.front = self.front.next
 
-def add_friendship():
-    if len(users) < 2:
-        print("Add at least two users first!")
-        return
+        if self.front is None:
+            self.rear = None
 
-    print("Users:", ", ".join(users))
+        print("Now treating:", patient)
 
-    user1 = input("Enter first user: ").strip()
-    user2 = input("Enter second user: ").strip()
+    def display_patients(self):
+        if self.front is None:
+            print("No patients waiting!")
+            return
 
-    if user1 not in users or user2 not in users:
-        print("User not found!")
-        return
+        current = self.front
 
-    if user1 == user2:
-        print("A user cannot be their own friend!")
-        return
+        print("\nWaiting Patients:")
 
-    i = users.index(user1)
-    j = users.index(user2)
-
-    matrix[i][j] = 1
-    matrix[j][i] = 1
-
-    print("Friendship added successfully!")
+        while current:
+            print(current.data)
+            current = current.next
 
 
-def display_network():
-    if not users:
-        print("No users available!")
-        return
+def main():
+    hospital = PatientQueue()
 
-    print("\n===== FRIENDSHIP ADJACENCY MATRIX =====")
+    while True:
+        print("\n===== HOSPITAL MANAGEMENT =====")
+        print("1. Add Patient")
+        print("2. Treat Next Patient")
+        print("3. Display Waiting Patients")
+        print("4. Exit")
 
-    print("{:<12}".format(""), end="")
+        choice = input("Enter your choice: ")
 
-    for user in users:
-        print("{:<12}".format(user), end="")
+        if choice == "1":
+            name = input("Enter patient name: ").strip()
 
-    print()
+            if name:
+                hospital.add_patient(name)
+            else:
+                print("Name cannot be empty!")
 
-    for i in range(len(users)):
-        print("{:<12}".format(users[i]), end="")
+        elif choice == "2":
+            hospital.treat_patient()
 
-        for j in range(len(users)):
-            print("{:<12}".format(matrix[i][j]), end="")
+        elif choice == "3":
+            hospital.display_patients()
 
-        print()
+        elif choice == "4":
+            print("Exiting Hospital Management System!")
+            break
 
-
-def display_friends():
-    name = input("Enter user name: ").strip()
-
-    if name not in users:
-        print("User not found!")
-        return
-
-    i = users.index(name)
-
-    friends = [
-        users[j]
-        for j in range(len(users))
-        if matrix[i][j] == 1
-    ]
-
-    if friends:
-        print("Friends of", name, ":", ", ".join(friends))
-    else:
-        print("No friends found!")
+        else:
+            print("Invalid choice!")
 
 
-while True:
-    print("\n===== SOCIAL NETWORK SYSTEM =====")
-    print("1. Add User")
-    print("2. Add Friendship")
-    print("3. Display Adjacency Matrix")
-    print("4. Display Friends")
-    print("5. Exit")
-
-    choice = input("Enter your choice: ")
-
-    if choice == "1":
-        add_user()
-
-    elif choice == "2":
-        add_friendship()
-
-    elif choice == "3":
-        display_network()
-
-    elif choice == "4":
-        display_friends()
-
-    elif choice == "5":
-        print("Exiting Social Network System!")
-        break
-
-    else:
-        print("Invalid choice!")
+if __name__ == "__main__":
+    main()
